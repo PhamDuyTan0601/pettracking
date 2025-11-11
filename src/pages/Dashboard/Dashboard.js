@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
-  // Sử dụng useCallback để memoize hàm fetchPets
+  // Sử dụng useCallback với empty dependencies
   const fetchPets = useCallback(async () => {
     try {
       const res = await petsAPI.getMyPets();
@@ -30,7 +30,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, []); // Không có dependencies vì không sử dụng state/props bên ngoài
+  }, []); // Empty dependencies
 
   const fetchPetData = async (petId) => {
     try {
@@ -38,7 +38,6 @@ const Dashboard = () => {
       const data = res.data.data || [];
       setPetData(data);
 
-      // Sample data for demo if no real data
       if (data.length === 0) {
         const sampleData = [
           {
@@ -54,7 +53,6 @@ const Dashboard = () => {
       }
     } catch (err) {
       console.error("Error fetching pet data:", err);
-      // Fallback sample data
       const sampleData = [
         {
           latitude: 10.8231,
@@ -71,7 +69,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchPets();
-  }, [fetchPets]); // Thêm fetchPets vào dependencies
+  }, [fetchPets]);
 
   const handlePetSelect = async (pet) => {
     setSelectedPet(pet);
@@ -157,7 +155,6 @@ const Dashboard = () => {
           </div>
         ) : (
           <>
-            {/* Pet Selector */}
             <div className="pet-selector">
               <label htmlFor="pet-select">Chọn Pet để theo dõi:</label>
               <select
@@ -179,10 +176,8 @@ const Dashboard = () => {
 
             {selectedPet && (
               <>
-                {/* Stats Cards */}
                 <DashboardStats petData={petData} selectedPet={selectedPet} />
 
-                {/* Map and Alerts Grid */}
                 <div className="dashboard-grid">
                   <div className="map-section">
                     <div className="section-header">
@@ -202,7 +197,6 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                {/* Pet List */}
                 <div className="pet-list-section">
                   <div className="section-header">
                     <h2>📋 Danh Sách Pets Của Bạn</h2>
