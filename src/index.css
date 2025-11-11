@@ -15,16 +15,8 @@ code {
 * {
   box-sizing: border-box;
 }
-/* Thêm vào index.css */
-@import "leaflet/dist/leaflet.css";
 
-/* Fix cho Leaflet container */
-.leaflet-container {
-  height: 100%;
-  width: 100%;
-}
-
-/* Fix cho marker icons */
+/* Fix Leaflet icons */
 .leaflet-marker-icon {
   margin-left: -12px !important;
   margin-top: -41px !important;

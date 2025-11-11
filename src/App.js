@@ -1,12 +1,13 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import AddPet from "./pages/AddPet";
-import PetDetail from "./pages/PetDetail";
-import DeviceManagement from "./pages/DeviceManagement";
-import ToastConfig from "./components/ToastConfig";
+import Login from "./pages/Login/Login";
+import Register from "./pages/Register/Register";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import AddPet from "./pages/AddPet/AddPet";
+import PetDetail from "./pages/PetDetail/PetDetail";
+import DeviceManagement from "./pages/DeviceManagement/DeviceManagement";
+import ToastConfig from "./components/ToastConfig/ToastConfig";
+import "./styles/globals.css";
 
 function App() {
   return (
