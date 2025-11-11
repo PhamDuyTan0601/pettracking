@@ -14,6 +14,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
+  // Sử dụng useCallback để memoize hàm fetchPets
   const fetchPets = useCallback(async () => {
     try {
       const res = await petsAPI.getMyPets();
@@ -29,7 +30,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // Không có dependencies vì không sử dụng state/props bên ngoài
 
   const fetchPetData = async (petId) => {
     try {
@@ -70,7 +71,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchPets();
-  }, [fetchPets]);
+  }, [fetchPets]); // Thêm fetchPets vào dependencies
 
   const handlePetSelect = async (pet) => {
     setSelectedPet(pet);

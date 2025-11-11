@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "react-toastify";
 import { calculateDistance } from "../../utils/helpers";
 import "./AlertSystem.css";
@@ -6,68 +6,72 @@ import "./AlertSystem.css";
 const AlertSystem = ({ petData, selectedPet }) => {
   const [alerts, setAlerts] = useState([]);
 
-  useEffect(() => {
-    if (petData && petData.length > 0) {
-      checkAlerts(petData[0]);
-    }
-  }, [petData]);
+  // Sử dụng useCallback để memoize hàm checkAlerts
+  const checkAlerts = useCallback(
+    (latestData) => {
+      if (!latestData) return;
 
-  const checkAlerts = (latestData) => {
-    if (!latestData) return;
+      const newAlerts = [];
 
-    const newAlerts = [];
-
-    // Kiểm tra pin yếu
-    if (latestData.batteryLevel < 20) {
-      const alertExists = alerts.some(
-        (alert) =>
-          alert.type === "battery" && alert.message.includes("Pin thấp")
-      );
-
-      if (!alertExists) {
-        newAlerts.push({
-          type: "battery",
-          message: `Pin thấp: ${latestData.batteryLevel}%`,
-          level: "warning",
-          timestamp: new Date().toISOString(),
-        });
-      }
-    }
-
-    // Kiểm tra ra khỏi vùng an toàn
-    if (latestData.latitude && latestData.longitude) {
-      const safeZoneCenter = [10.8231, 106.6297];
-      const distance = calculateDistance(
-        safeZoneCenter[0],
-        safeZoneCenter[1],
-        latestData.latitude,
-        latestData.longitude
-      );
-
-      if (distance > 0.5) {
+      // Kiểm tra pin yếu
+      if (latestData.batteryLevel < 20) {
         const alertExists = alerts.some(
           (alert) =>
-            alert.type === "location" &&
-            alert.message.includes("ra khỏi vùng an toàn")
+            alert.type === "battery" && alert.message.includes("Pin thấp")
         );
 
         if (!alertExists) {
           newAlerts.push({
-            type: "location",
-            message: "Pet ra khỏi vùng an toàn!",
-            level: "danger",
+            type: "battery",
+            message: `Pin thấp: ${latestData.batteryLevel}%`,
+            level: "warning",
             timestamp: new Date().toISOString(),
           });
         }
       }
-    }
 
-    // Hiển thị alert mới
-    newAlerts.forEach((alert) => {
-      toast[alert.level === "danger" ? "error" : "warning"](alert.message);
-      setAlerts((prev) => [...prev, { ...alert, id: Date.now() }]);
-    });
-  };
+      // Kiểm tra ra khỏi vùng an toàn
+      if (latestData.latitude && latestData.longitude) {
+        const safeZoneCenter = [10.8231, 106.6297];
+        const distance = calculateDistance(
+          safeZoneCenter[0],
+          safeZoneCenter[1],
+          latestData.latitude,
+          latestData.longitude
+        );
+
+        if (distance > 0.5) {
+          const alertExists = alerts.some(
+            (alert) =>
+              alert.type === "location" &&
+              alert.message.includes("ra khỏi vùng an toàn")
+          );
+
+          if (!alertExists) {
+            newAlerts.push({
+              type: "location",
+              message: "Pet ra khỏi vùng an toàn!",
+              level: "danger",
+              timestamp: new Date().toISOString(),
+            });
+          }
+        }
+      }
+
+      // Hiển thị alert mới
+      newAlerts.forEach((alert) => {
+        toast[alert.level === "danger" ? "error" : "warning"](alert.message);
+        setAlerts((prev) => [...prev, { ...alert, id: Date.now() }]);
+      });
+    },
+    [alerts]
+  ); // Thêm alerts vào dependencies
+
+  useEffect(() => {
+    if (petData && petData.length > 0) {
+      checkAlerts(petData[0]);
+    }
+  }, [petData, checkAlerts]); // Thêm checkAlerts vào dependencies
 
   const removeAlert = (id) => {
     setAlerts((prev) => prev.filter((alert) => alert.id !== id));
